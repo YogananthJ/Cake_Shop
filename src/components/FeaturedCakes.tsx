@@ -1,12 +1,15 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Star, Calendar } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { toast } from 'sonner';
 
 const FeaturedCakes = () => {
   const [hoveredCake, setHoveredCake] = useState<number | null>(null);
+  const [selectedSizes, setSelectedSizes] = useState<{ [key: number]: string }>({});
+  const { addToCart } = useCart();
 
   const featuredCakes = [
     {
@@ -67,6 +70,31 @@ const FeaturedCakes = () => {
     }
   ];
 
+  const handleSizeSelect = (cakeId: number, size: string) => {
+    setSelectedSizes(prev => ({ ...prev, [cakeId]: size }));
+  };
+
+  const handleAddToCart = (cake: typeof featuredCakes[0]) => {
+    const selectedSize = selectedSizes[cake.id] || cake.sizes[0];
+    
+    addToCart({
+      id: cake.id,
+      name: cake.name,
+      price: cake.price,
+      image: cake.image,
+      size: selectedSize
+    });
+
+    toast.success(`${cake.name} (${selectedSize}) added to cart!`, {
+      description: `₹${cake.price} - Ready for checkout`
+    });
+  };
+
+  const handleQuickAdd = (cake: typeof featuredCakes[0]) => {
+    const selectedSize = selectedSizes[cake.id] || cake.sizes[0];
+    handleAddToCart(cake);
+  };
+
   return (
     <section className="py-16 bg-gradient-to-b from-white to-cream-50">
       <div className="container mx-auto px-4">
@@ -126,7 +154,10 @@ const FeaturedCakes = () => {
                 {/* Quick add overlay */}
                 {hoveredCake === cake.id && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300">
-                    <Button className="btn-primary">
+                    <Button 
+                      className="btn-primary"
+                      onClick={() => handleQuickAdd(cake)}
+                    >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       Quick Add
                     </Button>
@@ -159,19 +190,27 @@ const FeaturedCakes = () => {
                   {/* Size options */}
                   <div className="flex gap-2 mb-4">
                     {cake.sizes.map((size) => (
-                      <span
+                      <button
                         key={size}
-                        className="px-2 py-1 bg-cream-100 text-lightBrown-700 text-xs rounded-full border border-cream-200"
+                        onClick={() => handleSizeSelect(cake.id, size)}
+                        className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                          selectedSizes[cake.id] === size || (!selectedSizes[cake.id] && size === cake.sizes[0])
+                            ? 'bg-babyPink-100 border-babyPink-300 text-babyPink-700'
+                            : 'bg-cream-100 border-cream-200 text-lightBrown-700 hover:bg-cream-200'
+                        }`}
                       >
                         {size}
-                      </span>
+                      </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Action buttons */}
                 <div className="flex gap-2">
-                  <Button className="flex-1 btn-primary">
+                  <Button 
+                    className="flex-1 btn-primary"
+                    onClick={() => handleAddToCart(cake)}
+                  >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Add to Cart
                   </Button>
