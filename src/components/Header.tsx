@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,7 @@ const Header = () => {
     { path: '/special-occasions', label: 'Special Occasions' },
     { path: '/categories', label: 'Categories' },
     { path: '/combos', label: 'Combos' },
-    { path: '/about', label: 'About' }
+    { path: '/settings', label: 'Settings' }
   ];
 
   return (

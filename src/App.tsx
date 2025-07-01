@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Cakes from "./pages/Cakes";
 import SpecialOccasions from "./pages/SpecialOccasions";
+import Categories from "./pages/Categories";
+import Combos from "./pages/Combos";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,9 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/cakes" element={<Cakes />} />
             <Route path="/special-occasions" element={<SpecialOccasions />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/combos" element={<Combos />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
