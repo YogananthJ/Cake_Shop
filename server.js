@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors'; // ✅ Added CORS import
+import cors from 'cors';
 import User from './models/user.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -11,7 +11,7 @@ import auth from './middleware/auth.js';
 
 const app = express();
 
-// ✅ Enable CORS for all origins (or restrict if needed)
+// Enable CORS for all origins (customize as needed)
 app.use(cors());
 
 // Enable JSON body parsing
@@ -51,22 +51,24 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Find user
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: 'User not found' });
 
-    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
-    // Create JWT Token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ token });
-
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        profilePic: user.profilePic || 'profile.jpg'
+      }
+    });
   } catch (err) {
-    console.error('Login Error:', err);
     res.status(500).json({ msg: 'Server error during login' });
   }
 });

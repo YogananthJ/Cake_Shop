@@ -1,12 +1,24 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import CartSidebar from './CartSidebar';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('token'));
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    navigate('/login');
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -53,17 +65,31 @@ const Header = () => {
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
             <CartSidebar />
-            <Link to="/login">
-              <Button variant="outline" className="hidden sm:flex">
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="btn-primary hidden sm:flex">
-                Sign Up
-              </Button>
-            </Link>
-            
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src="/profile-placeholder.png"
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full border"
+                />
+                <Button variant="outline" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="hidden sm:flex">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="btn-primary hidden sm:flex">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
             {/* Mobile menu button */}
             <Button
               variant="ghost"
@@ -95,12 +121,29 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-cream-200">
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full justify-center">Login</Button>
-                </Link>
-                <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="btn-primary w-full justify-center">Sign Up</Button>
-                </Link>
+                {isLoggedIn ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-center"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-center">Login</Button>
+                    </Link>
+                    <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button className="btn-primary w-full justify-center">Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>

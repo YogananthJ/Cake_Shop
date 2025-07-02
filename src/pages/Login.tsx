@@ -17,21 +17,17 @@ const Login = () => {
     setErrorMsg('');
 
     try {
-      // Send POST request to your backend login endpoint
       const response = await axios.post('http://localhost:5000/login', {
         email,
         password,
       });
 
-      // Get token from response
-      const { token } = response.data;
-
-      // Save token in localStorage
+      const { token, user } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      // Redirect to home page or dashboard
-      navigate('/');
-
+      // Reload to update header state
+      window.location.href = '/profile';
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.msg) {
         setErrorMsg(error.response.data.msg);
@@ -77,22 +73,20 @@ const Login = () => {
                 required
               />
             </div>
-
             {errorMsg && (
-              <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+              <div className="text-red-500 text-sm">{errorMsg}</div>
             )}
           </CardContent>
-
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="btn-primary w-full">
-              Sign In
+          <CardFooter className="flex flex-col gap-2">
+            <Button type="submit" className="w-full btn-primary">
+              Login
             </Button>
-            <p className="text-sm text-center text-gray-600">
+            <span className="text-sm text-lightBrown-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-babyPink-500 hover:text-babyPink-600 font-medium">
-                Sign up
+              <Link to="/signup" className="text-babyPink-500 hover:underline">
+                Sign Up
               </Link>
-            </p>
+            </span>
           </CardFooter>
         </form>
       </Card>

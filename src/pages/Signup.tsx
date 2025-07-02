@@ -1,54 +1,47 @@
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMsg('Passwords do not match');
-      return;
-    }
-
     try {
-      // Send signup POST request to backend
+      // Sign up the user
       await axios.post('http://localhost:5000/signup', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
+        name,
+        email,
+        password,
       });
 
-      // Redirect to login page on success
-      navigate('/login');
+      // Immediately log in after signup to get token and user info
+      const loginRes = await axios.post('http://localhost:5000/login', {
+        email,
+        password,
+      });
 
+      const { token, user } = loginRes.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Reload to update header state
+      window.location.href = '/profile';
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.msg) {
         setErrorMsg(error.response.data.msg);
       } else {
-        setErrorMsg('Signup failed. Please try again.');
+        setErrorMsg('An error occurred. Please try again.');
       }
     }
   };
@@ -58,24 +51,23 @@ const Signup = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-babyPink-500 to-lightBrown-600 bg-clip-text text-transparent">
-            Join CakeNest
+            Create Account
           </CardTitle>
           <CardDescription>
-            Create your account to start ordering delicious cakes
+            Sign up for CakeNest
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                name="name"
                 type="text"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleChange}
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
@@ -83,11 +75,10 @@ const Signup = () => {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -95,42 +86,27 @@ const Signup = () => {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={handleChange}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
             {errorMsg && (
-              <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+              <div className="text-red-500 text-sm">{errorMsg}</div>
             )}
           </CardContent>
-
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="btn-primary w-full">
-              Create Account
+          <CardFooter className="flex flex-col gap-2">
+            <Button type="submit" className="w-full btn-primary">
+              Sign Up
             </Button>
-            <p className="text-sm text-center text-gray-600">
+            <span className="text-sm text-lightBrown-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-babyPink-500 hover:text-babyPink-600 font-medium">
-                Sign in
+              <Link to="/login" className="text-babyPink-500 hover:underline">
+                Login
               </Link>
-            </p>
+            </span>
           </CardFooter>
         </form>
       </Card>
