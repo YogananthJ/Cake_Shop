@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,9 @@ const Signup = () => {
     confirmPassword: ''
   });
 
+  const [errorMsg, setErrorMsg] = useState('');
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -21,14 +24,33 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setErrorMsg('Passwords do not match');
       return;
     }
-    console.log('Signup attempt:', formData);
-    // TODO: Implement signup logic
+
+    try {
+      // Send signup POST request to backend
+      await axios.post('http://localhost:5000/signup', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Redirect to login page on success
+      navigate('/login');
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.msg) {
+        setErrorMsg(error.response.data.msg);
+      } else {
+        setErrorMsg('Signup failed. Please try again.');
+      }
+    }
   };
 
   return (
@@ -42,6 +64,7 @@ const Signup = () => {
             Create your account to start ordering delicious cakes
           </CardDescription>
         </CardHeader>
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -92,7 +115,12 @@ const Signup = () => {
                 required
               />
             </div>
+
+            {errorMsg && (
+              <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+            )}
           </CardContent>
+
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="btn-primary w-full">
               Create Account

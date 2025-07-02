@@ -1,19 +1,44 @@
-
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // TODO: Implement login logic
+    setErrorMsg('');
+
+    try {
+      // Send POST request to your backend login endpoint
+      const response = await axios.post('http://localhost:5000/login', {
+        email,
+        password,
+      });
+
+      // Get token from response
+      const { token } = response.data;
+
+      // Save token in localStorage
+      localStorage.setItem('token', token);
+
+      // Redirect to home page or dashboard
+      navigate('/');
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.msg) {
+        setErrorMsg(error.response.data.msg);
+      } else {
+        setErrorMsg('An error occurred. Please try again.');
+      }
+    }
   };
 
   return (
@@ -27,6 +52,7 @@ const Login = () => {
             Sign in to your CakeNest account
           </CardDescription>
         </CardHeader>
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -51,7 +77,12 @@ const Login = () => {
                 required
               />
             </div>
+
+            {errorMsg && (
+              <p className="text-sm text-red-500 text-center">{errorMsg}</p>
+            )}
           </CardContent>
+
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="btn-primary w-full">
               Sign In
