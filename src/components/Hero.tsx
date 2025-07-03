@@ -1,7 +1,22 @@
-
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
+  const [showLangAlert, setShowLangAlert] = useState(false);
+
+  const handleTutorialClick = () => {
+    setShowLangAlert(true);
+  };
+
+  const handleLangSelect = (lang: 'english' | 'tamil') => {
+    setShowLangAlert(false);
+    if (lang === 'english') {
+      window.open('https://www.youtube.com/@CakesbyLynz/featured', '_blank');
+    } else {
+      window.open('https://www.youtube.com/playlist?list=PLX9ciqY-LU_eJpddyoh-OGDWvEO3ob5kQ', '_blank');
+    }
+  };
+
   return (
     <section className="relative min-h-[600px] bg-gradient-to-br from-babyPink-50 via-cream-50 to-lightBrown-50 overflow-hidden">
       {/* Background decorations */}
@@ -33,8 +48,8 @@ const Hero = () => {
               <Button className="btn-primary text-lg px-8 py-4">
                 🛍️ Order Now
               </Button>
-              <Button className="btn-secondary text-lg px-8 py-4">
-                📹 Watch Live Baking
+              <Button className="btn-secondary text-lg px-8 py-4" onClick={handleTutorialClick}>
+                📹 Watch Baking Tutorials
               </Button>
             </div>
 
@@ -117,6 +132,23 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Language Alert Modal */}
+      {showLangAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
+            <div className="text-lg font-semibold mb-4">Choose Language</div>
+            <div className="flex gap-4">
+              <Button className="btn-primary px-6" onClick={() => handleLangSelect('tamil')}>
+                Tamil
+              </Button>
+              <Button className="btn-secondary px-6" onClick={() => handleLangSelect('english')}>
+                English
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
