@@ -2,8 +2,7 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import FeaturedCakes from '@/components/FeaturedCakes';
-import InnovativeFeatures from '@/components/InnovativeFeatures';
-import Testimonials from '@/components/Testimonials';
+
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -12,8 +11,8 @@ const Index = () => {
       <Header />
       <Hero />
       <FeaturedCakes />
-      <InnovativeFeatures />
-      <Testimonials />
+      
+      
       <Footer />
     </div>
   );

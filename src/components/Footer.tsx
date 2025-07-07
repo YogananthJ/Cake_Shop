@@ -6,25 +6,7 @@ import { Phone, MapPin, Mail, Star } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-lightBrown-800 to-lightBrown-900 text-white">
-      {/* Newsletter section */}
-      <div className="bg-gradient-to-r from-babyPink-500 to-babyPink-600 py-12">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold mb-4">🎂 Stay Sweet with Our Newsletter</h3>
-          <p className="text-babyPink-100 mb-6 text-lg">
-            Get exclusive offers, new cake launches, and celebration tips delivered to your inbox
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <Input
-              type="email"
-              placeholder="Enter your email address"
-              className="flex-1 bg-white/20 border-white/30 text-white placeholder:text-babyPink-100 focus:bg-white/30"
-            />
-            <Button className="bg-white text-babyPink-600 hover:bg-cream-100 font-semibold px-8">
-              Subscribe 🍰
-            </Button>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Main footer */}
       <div className="container mx-auto px-4 py-16">

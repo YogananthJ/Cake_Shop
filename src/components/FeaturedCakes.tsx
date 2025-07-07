@@ -214,9 +214,7 @@ const FeaturedCakes = () => {
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Add to Cart
                   </Button>
-                  <Button variant="outline" size="sm" className="px-3">
-                    <Calendar className="w-4 h-4" />
-                  </Button>
+                 
                 </div>
               </CardContent>
             </Card>
@@ -225,7 +223,7 @@ const FeaturedCakes = () => {
 
         {/* View all button */}
         <div className="text-center mt-12">
-          <Button className="btn-secondary text-lg px-8 py-4">
+          <Button className="btn-secondary text-lg px-8 py-4" onClick={() => window.location.href = '/cakes'}>
             View All Cakes →
           </Button>
         </div>

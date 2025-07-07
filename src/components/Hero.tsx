@@ -85,19 +85,7 @@ const Hero = () => {
                 <div className="text-2xl font-bold">30% OFF</div>
               </div>
 
-              {/* Floating review card */}
-              <div className="absolute -bottom-4 -left-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg animate-float">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-yellow-400">⭐</span>
-                    ))}
-                  </div>
-                  <span className="text-sm text-lightBrown-600">4.9</span>
-                </div>
-                <div className="text-sm text-lightBrown-700">"Best cake ever! 🤤"</div>
-                <div className="text-xs text-lightBrown-500">- Sarah M.</div>
-              </div>
+             
             </div>
           </div>
         </div>
